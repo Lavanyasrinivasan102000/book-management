@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/addcustomer.css">
+</head>
+<body>
+  
+    <form onsubmit="addCustomer(event)">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+    
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+    
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+    
+        <label for="role">Role:</label>
+        <select id="role" name="role" required>
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+        </select>
+    
+        <button type="submit">Submit</button>
+      </form>
+      <script>
+        const addCustomer=async(event)=>{
+    event.preventDefault()
+    
+const name= document.getElementById('txtname').value
+const email= document.getElementById('txtemail').value
+const password= document.getElementById('txtpassword').value
+const role= document.getElementById('txtrole').value
+let json={
+  name,email,password,role
+}
+console.log(json);
+let code
+const response = await fetch('http://localhost:9000/addCustomer', {
+          method: "POST",
+          mode: "cors",
+          cache: "no-cache",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          referrerPolicy: "no-referrer",
+          body: JSON.stringify(json),
+        }).then((res) =>{
+          code=res.status
+          return res.json()
+        } )
+        console.log(code);
+        if(code===200){
+          alert('Customer Added Successfully')
+          window.location.href='book.html'
+        }else{
+          alert(response.message)
+        }
+    }
+    
+
+
+      </script>
+</body>
+</html>

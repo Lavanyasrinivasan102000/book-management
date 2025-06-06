@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/home.css">
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="nav-links">
+          <a href="home.html">Homr</a>
+          <a href="orders.html">Orders</a>
+          <a href="signup.html">signup</a>
+          <a href="index.html">Login</a>
+        </div>
+      </div>
+    
+    <div class="content-container">
+        <h2>Order Management</h2>
+
+
+        <table>
+            <thead>
+                <tr>
+                    <th>CustomerID</th>
+                    <th>Order Date</th>
+                    <th>Status</th>
+                    <th>Book Name</th>
+                    <th>Book quantity</th>
+
+
+                </tr>
+            </thead>
+            <tbody id="orderTable">
+                <!-- Book data will be inserted here dynamically -->
+            </tbody>
+        </table>
+        <form onsubmit="placeOrder(event)">
+            <input type="text" placeholder="Enter Customer ID" id="txtCustId" required>
+
+            <input type="text" placeholder="Enter quantity" id="txtquantity" required>
+            <input type="text" placeholder="Enter Book Name" id="txtBook" required>
+            <button type="submit">Place Order</button>
+        </form>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", async (event) => {
+            const res = await fetch('http://localhost:9000/getAllOrders',
+            ).then(res => res.json()).then(res => res)
+            console.log(res);
+            renderOrders(res)
+        });
+        const renderOrders = (res) => {
+
+            // Loop through the books array and create table rows
+            const tableBody = document.getElementById('orderTable');
+            tableBody.innerHTML = ''
+            res.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+<form>
+  <td>
+    <input name="customerName" value= '${order.customerId}'  />
+    <input name="id" type="hidden" value= '${order._id}' id="txtId" />
+
+  </td>
+  <td>
+    <input name="orderDate"  type="text" value= '${order.orderDate}' />
+  </td>
+  <td>
+    <input name="status" value= '${order.status}'  />
+  </td>
+  <td>
+    <input name="bookName" value= '${order.orderItems[0].book}' />
+  </td>
+  <td>
+    <input name="bookqty" value= '${order.orderItems[0].quantity}' />
+  </td>
+    </form>
+`;
+
+                tableBody.appendChild(row);
+            })
+        }
+        const placeOrder = async (e) => {
+            e.preventDefault()
+            const customerId = document.getElementById('txtCustId').value
+            const quantity = document.getElementById('txtquantity').value
+            const book = document.getElementById('txtBook').value
+            let json = {
+                customerId,
+                orderItems: [
+                    {
+
+                    
+                    book,
+                    quantity
+                    }
+                ]
+            }
+            let code
+            const response = await fetch('http://localhost:9000/addOrder', {
+                method: "POST",
+                mode: "cors",
+                cache: "no-cache",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                referrerPolicy: "no-referrer",
+                body: JSON.stringify(json),
+            }).then((res) => {
+                code = res.status
+                return res.json()
+            })
+            console.log(code);
+            if (code === 200) {
+                alert('Book Added Successfully')
+                window.location.reload()
+            } else {
+                alert(response.message)
+            }
+        }         
+    </script>
+
+</body>
+
+</html>

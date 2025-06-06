@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/customer.css">
+  <title>Customer Form</title>
+</head>
+<body>
+  <div class="navbar">
+    <div class="nav-links">
+      <a href="home.html">Books</a>
+      <a href="orders.html">Orders</a>
+      <a href="signup.html">signup</a>
+      <a href="index.html">Login</a>
+      <a href="customer.html">Customer</a>
+
+    </div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Role</th>
+         <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="bookTableBody">
+      <!-- customer data will be inserted here dynamically -->
+    </tbody>
+  </table>
+  <a href="addcustomer.html">Add Customer</a>
+</div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", async(event) => {
+
+const res=await fetch('http://localhost:9000/getAllCustomers',
+).then(res=>res.json()).then(res=>res)
+console.log(res);  
+renderCustomer(res)
+});
+
+const renderCustomer=(res)=>{
+
+// Loop through the books array and create table rows
+const tableBody = document.getElementById('getAllCustomers');
+tableBody.innerHTML=''
+res.forEach(customer => {
+const row = document.createElement('tr');
+row.innerHTML = `
+<form>
+<td>
+<input name="username" value= '${customer.title}' id="${customer._id}txtname" />
+<input name="id" type="hidden" value= '${customer._id}' id="txtId" />
+
+</td>
+<td>
+<input name="email" value= '${customer.email}' id="${customer.email}txtemail" />
+</td>
+<td>
+<input name="password" value= '${customer.password}' id="${customer.password}txtpassword" />
+</td>
+<td>
+<input name="role" value= '${customer.role}' id="${customer.role}txtrole" />
+</td>
+
+<td>
+<button onclick="updateBooks('${customer._id}')"> Update</button>
+<button onclick="deleteBook('${customer._id}')">Delete</button>
+<button>Order</button>
+
+</td>
+</form>
+`;
+
+tableBody.appendChild(row);
+})
+}
+
+const updateCustomer=async(id)=>{
+const title= document.getElementById(id+'txtTitle').value
+const name= document.getElementById(id+'txtname').value
+const email= document.getElementById(id+'txtemail').value
+const password= document.getElementById(id+'txtpassword').value
+const role= document.getElementById(id+'txtrole').value
+let json={
+_id:id,title,name,email,password,role
+}
+console.log(json);
+let code
+const response = await fetch('http://localhost:9000/updateCustomer', {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify(json),
+      }).then((res) =>{
+        code=res.status
+        return res.json()
+      } )
+      console.log(code);
+      if(code===200){
+        alert('Customer Updated Successfully')
+        window.location.reload()
+      }else{
+        alert(response.message)
+      }
+      const deleteCustomer=async(id)=>{
+    let json={
+      _id:id
+    }
+    console.log(json);
+let code
+const response = await fetch('http://localhost:9000/deleteCustomer', {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify(json),
+      }).then((res) =>{
+        code=res.status
+        return res.json()
+      } )
+      console.log(code);
+      if(code===200){
+        alert('Customer deleted Successfully')
+        window.location.reload()
+      }else{
+        alert(response.message)
+      }
+  }
+  
+}
+</script>
+  
+
+</body>
+</html>

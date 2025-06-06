@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/addbook.css">
+  <title>Book Form</title>
+</head>
+<body>
+
+  <form onsubmit="addBook(event)">
+    <label for="book">Book:</label>
+    <input type="text" id="txtTitle" name="book" required>
+
+    <label for="author">Author:</label>
+    <input type="text" id="txtauthor" name="author" required>
+
+    <label for="genre">Genre:</label>
+    <input type="text" id="txtgenre" name="genre" required>
+
+    <label for="quantity">Quantity:</label>
+    <input type="number" id="txtquantity" name="quantity" required>
+
+    <label for="price">Price:</label>
+    <input type="number" id="txtprice" name="price" required>
+
+    <label for="inStock">In Stock:</label>
+    <input type="number" id="txtinStock" name="inStock" required>
+
+    <button type="submit">Submit</button>
+  </form>
+  <script>
+    
+    const addBook=async(event)=>{
+    event.preventDefault()
+    
+const title= document.getElementById('txtTitle').value
+const author= document.getElementById('txtauthor').value
+const genre= document.getElementById('txtgenre').value
+const quantity= document.getElementById('txtquantity').value
+const price= document.getElementById('txtprice').value
+const inStock= document.getElementById('txtinStock').value
+
+let json={
+  title,author,genre,quantity,price,inStock
+}
+console.log(json);
+let code
+const response = await fetch('http://localhost:9000/addBook', {
+          method: "POST",
+          mode: "cors",
+          cache: "no-cache",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          referrerPolicy: "no-referrer",
+          body: JSON.stringify(json),
+        }).then((res) =>{
+          code=res.status
+          return res.json()
+        } )
+        console.log(code);
+        if(code===200){
+          alert('Book Added Successfully')
+          window.location.href='home.html'
+        }else{
+          alert(response.message)
+        }
+    }
+   
+  </script>
+
+</body>
+</html>

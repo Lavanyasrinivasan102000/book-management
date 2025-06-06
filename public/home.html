@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/home.css">
+  <title>Home Page</title>
+</head>
+<body>
+  <div class="navbar">
+    <div class="nav-links">
+      <a href="home.html">Home</a>
+      <a href="orders.html">Orders</a>
+      <a href="signup.html">signup</a>
+      <a href="index.html">Login</a>
+      
+
+    </div>
+  </div>
+  <div class="content-container">
+
+  
+  <h1>Book Management System</h1>
+
+  <div class="form-container">
+   
+
+  <div class="search-container">
+    <h2>Search Books</h2>
+    
+    <input type="text" id="searchAuthor" placeholder="Search Author">
+    <input type="text" id="searchBook" placeholder="Search Book">
+    <button onclick="searchBooks()">search</button>
+  </div>
+  
+
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genre</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>In Stock</th>
+        <th>On Order</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="bookTableBody">
+      <!-- Book data will be inserted here dynamically -->
+    </tbody>
+  </table>
+  <a href="addbook.html">Add Books</a>
+</div>
+</div>
+<script >
+  document.addEventListener("DOMContentLoaded", async(event) => {
+
+    const res=await fetch('http://localhost:9000/getAllBooks',
+    ).then(res=>res.json()).then(res=>res)
+    console.log(res);  
+    renderBooks(res)
+  });
+
+  const renderBooks=(res)=>{
+    
+    // Loop through the books array and create table rows
+    const tableBody = document.getElementById('bookTableBody');
+    tableBody.innerHTML=''
+    res.forEach(book => {
+const row = document.createElement('tr');
+row.innerHTML = `
+<form>
+  <td>
+    <input name="title" value= '${book.title}' id="${book._id}txtTitle" />
+    <input name="id" type="hidden" value= '${book._id}' id="txtId" />
+
+  </td>
+  <td>
+    <input name="author" value= '${book.author}' id="${book._id}txtauthor" />
+  </td>
+  <td>
+    <input name="genre" value= '${book.genre}' id="${book._id}txtgenre" />
+  </td>
+  <td>
+    <input name="quantity" value= '${book.quantity}' id="${book._id}txtquantity" />
+  </td>
+  <td>
+    <input name="price" value= '${book.price}' id="${book._id}txtprice" />
+  </td>
+  <td>
+    <input name="inStock" value= '${book.inStock}' id="${book._id}txtinStock" />
+  </td>
+  <td>
+    <input name="onOrder" value= '${book.onOrder}' id="${book._id}txtonOrder" />
+  </td>
+  
+  <td>
+    <button onclick="updateBooks('${book._id}')"> Update</button>
+    <button onclick="deleteBook('${book._id}')">Delete</button>
+    <button>Order</button>
+    
+    </td>
+    </form>
+`;
+
+tableBody.appendChild(row);
+})
+  }
+  const updateBooks=async(id)=>{
+const title= document.getElementById(id+'txtTitle').value
+const author= document.getElementById(id+'txtauthor').value
+const genre= document.getElementById(id+'txtgenre').value
+const quantity= document.getElementById(id+'txtquantity').value
+const price= document.getElementById(id+'txtprice').value
+const inStock= document.getElementById(id+'txtinStock').value
+const onOrder= document.getElementById(id+'txtonOrder').value
+let json={
+_id:id,title,author,genre,quantity,price,inStock,onOrder
+}
+console.log(json);
+let code
+const response = await fetch('http://localhost:9000/updateBook', {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify(json),
+      }).then((res) =>{
+        code=res.status
+        return res.json()
+      } )
+      console.log(code);
+      if(code===200){
+        alert('Book Updated Successfully')
+        window.location.reload()
+      }else{
+        alert(response.message)
+      }
+  }
+  const deleteBook=async(id)=>{
+    let json={
+      _id:id
+    }
+    console.log(json);
+let code
+const response = await fetch('http://localhost:9000/deleteBook', {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify(json),
+      }).then((res) =>{
+        code=res.status
+        return res.json()
+      } )
+      console.log(code);
+      if(code===200){
+        alert('Book deleted Successfully')
+        window.location.reload()
+      }else{
+        alert(response.message)
+      }
+  }
+const searchBooks=async()=>{
+let author =document.getElementById('searchAuthor').value
+let title =document.getElementById('searchBook').value
+let qryStr='?'
+if(author){
+
+qryStr+=`author=${author}&`
+}if(title){
+
+qryStr+=`title=${title}&`
+}
+console.log(qryStr);
+
+const res=await fetch('http://localhost:9000/search'+qryStr,
+    ).then(res=>res.json()).then(res=>res)
+    console.log(res);  
+    renderBooks(res)
+}
+</script>
+</body>
+</html>

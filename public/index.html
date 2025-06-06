@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css"> <!-- Your CSS file -->
+  <title>Login Page</title>
+</head>
+<body>
+  <header>
+   <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <!-- Other navigation links -->
+        <li id="adminLink"><a href="adminLogin.html">Admin</a></li>
+        <li id="logoutLink"><a href="#" onclick="logoutUser()">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="login-container">
+      <h1>Login</h1>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+          <button type="submit">Login</button>
+        </div>
+      </form>
+      <div class="forgot-password">
+        <p>Don't have an account?</p><a href="signup.html">Sign Up</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2023 OBMS</p>
+    <nav>
+      <ul>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <!-- Other footer links -->
+      </ul>
+    </nav>
+  </footer>
+</body>
+</html>
